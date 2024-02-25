@@ -43,7 +43,34 @@ namespace App
 
         public Description_of_point Position(List<Description_of_point> Points, Int32 i, double dt, double dy, double m, double k)
         {
-            double x = Points[i - 1].x
+            double x = Points[i-1].x + dt * Points[i-1].Vx;
+            double y = Points[i-1].y + dt * Points[i-1].Vy;
+
+            double Vx = Points[i-1].Vx - k * dt * Points[i-1].Vx/m;
+            double Vy = Points[i-1].Vy - dt*(g + k * Points[i-1].Vy/m);
+
+            return new Description_of_point(x, y, Vx, Vy);
+        }
+
+        public void Calculate (double x0, double y0)
+        {
+            double t = 0;
+            double T = 2 * V0 * Math.Sin(alpha) / g;
+            double dt = T/partition;
+
+            Description_of_point point = new Description_of_point(x0, y0, V0 * Math.Cos(alpha), V0 * Math.Sin(alpha));
+            Points.Add(point);
+            t += dt;
+            Int32 i = 1;
+
+            while(t < T)
+            {
+                double k = 1/2;
+                Description_of_point position = Position(Points, i, dt, weight, k);
+                Points.Add(position);
+                t += dt;
+                i += 1;
+            }
         }
     }
 
